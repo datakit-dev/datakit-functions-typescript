@@ -15,9 +15,11 @@ export default (ctx: Context) => {
     const query1 = runQuery(query, "select count(*) as total_products from custom_file.products").then((results) => {
         console.log("Total Products: %s", results[0]['total_products']);
     });
+
     const query2 = runQuery(query, "select count(*) as total_words from custom_file_1.stopwords").then((results) => {
         console.log("Total Words: %s", results[0]['total_words']);
     });
+
     const query3 = runQuery(query, "select product_type, avg(variant.price) as avg_price from custom_file.products, unnest(variants) as variant group by product_type order by avg_price desc").then((results) => {
         console.log("Product Type | Average Price");
         console.log("-------------+--------------");

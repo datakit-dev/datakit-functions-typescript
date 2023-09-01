@@ -1,9 +1,10 @@
 {
+  "include": ["./src/**/*"],
+  "exclude": ["node_modules", "dist"],
   "compilerOptions": {
-    "target": "es2015",
+    "target": "es5",
     "moduleResolution": "node",
     "module": "commonjs",
-    "noEmit": true,
     "allowJs": true,
     "removeComments": false,
     "strict": true,
@@ -18,9 +19,10 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "skipLibCheck": true,
-    "typeRoots": [
-      "node_modules/@types",
-      "node_modules/@datakit-dev/types/types"
-    ],
+    "baseUrl": ".",
+    "paths": {
+      "datakit/*": ["node_modules/@datakit-dev/types/types/datakit/*"],
+    },
+    "outDir": "./dist",
   }
 }
