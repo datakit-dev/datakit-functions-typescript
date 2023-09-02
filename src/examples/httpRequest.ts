@@ -2,28 +2,17 @@ import http, { HttpMethod, Params } from 'datakit/http';
 
 const urls: {[key: string]: {
     method: HttpMethod,
-    params: Params,
-    body: {
+    params?: Params,
+    body?: {
         json: {[key: string]: string}
     } | null
 }
 } = {
     "https://httpbin.org/get": {
         method: "GET",
-        params: {
-            headers: {
-                
-            }
-        },
-        body: null
     },
     "https://httpbin.org/post": {
         method: "POST",
-        params: {
-            headers: {
-                
-            }
-        },
         body: {
             json: {
                 "foo": "bar"
@@ -32,11 +21,6 @@ const urls: {[key: string]: {
     },
     "https://httpbin.org/put": {
         method: "PUT",
-        params: {
-            headers: {
-                
-            }
-        },
         body: {
             json: {
                 "foo": "baz"
@@ -45,18 +29,27 @@ const urls: {[key: string]: {
     },
     "https://httpbin.org/delete": {
         method: "DELETE",
-        params: {
-            headers: {
-                
-            }
-        },
         body: {
             json: {
                 "foo": "bar"
             }
+        },
+        params: {
+            headers: {
+                "Content-Type": "application/json"
+            },
         }
     },
 };
+
+export function printTree(obj: any, indent: number = 0) {
+    for (const [key, value] of Object.entries(obj)) {
+        console.log("%s%s: %s", " ".repeat(indent), key, value);
+        if (value && typeof value === "object") {
+            printTree(value, indent + 2);
+        }
+    }
+}
 
 export default () => {
     for (const [url, config] of Object.entries(urls)) {
@@ -65,11 +58,11 @@ export default () => {
 
         try {
             const resp = http.request(method, url, body, params);
-            if (typeof resp.body === 'object') {
-                console.log("JSON:", JSON.stringify(resp.body, null, 2));
-            } else {
-                console.log("Text:", resp.body);
-
+            console.log("Status:", resp.status);
+            const json = resp.json();
+            if (typeof json === "object") {
+                console.log("JSON:");
+                printTree(json);
             }
         } catch (error) {
             console.error("Error:", error);
