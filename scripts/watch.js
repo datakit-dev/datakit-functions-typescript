@@ -1,4 +1,4 @@
-const { execSync } = require('child_process');
+const { spawnSync, execSync } = require('child_process');
 const printf = require('printf');
 const path = require('path');
 const chalk = require('chalk');
@@ -9,17 +9,16 @@ commandExists('dtkt').then(function () {
     console.log(chalk.green('dtkt is installed!'));
     console.log(chalk.blueBright('Watching for changes in src/**/* ...'));
     watch('src', { recursive: true }, function(evt, name) {
-        console.log(evt, name);
         const dir = path.dirname(name);
         const file = path.basename(name);
         const ext = path.extname(name);
         const changedFile = path.join(dir, file);
         const runFile = path.join('./dist/', file.replace(ext, '.js'));
 
-        console.log(chalk.yellowBright(printf('%s changed', changedFile)));
-        console.log('Building with', chalk.blue("`yarn build`..."));
+        console.log(chalk.yellowBright(printf('Updated: %s', changedFile)));
+        console.log(chalk.blueBright('$ yarn build'));
         try {
-            let stdout = execSync('yarn build');
+            const stdout = execSync('yarn build');
             console.log(stdout.toString().trim());
         } catch (error) {
             console.log(chalk.red("Build failed:"), error.stdout.toString().trim())
@@ -27,17 +26,15 @@ commandExists('dtkt').then(function () {
         }
 
         const startTime = new Date().getTime();
-        console.log('Running with', chalk.blue(printf("dtkt f run -f %s...", runFile)));
-        console.log(chalk.yellowBright('Output:'));
-        console.log('---------------------------')
+        const command = printf('dtkt f run -r -f %s', runFile);
+        console.log(chalk.blueBright(printf("$ %s", command)));
         try {
-            stdout = execSync('dtkt f run -f ' + runFile);
+            const parts = command.split(' ');
+            const { stdout } = spawnSync(parts[0], parts.slice(1));
             console.log(stdout.toString().trim())
-            console.log('---------------------------')
             console.log(chalk.green(printf("Finished in %dms.", new Date().getTime() - startTime)));    
         } catch (error) {
             console.log(chalk.red("Run failed:"), error.stdout.toString().trim())
-            console.log('---------------------------')
             console.log(chalk.red(printf("Finished in %dms.", new Date().getTime() - startTime)));
         }
     });
