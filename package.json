@@ -6,11 +6,16 @@
   "author": "Jordan Fowler <jordan@datakit.dev>",
   "license": "MIT",
   "devDependencies": {
-    "@datakit-dev/types": "^0.0.6",
+    "@datakit-dev/types": "../datakit-ts",
     "@types/bytes": "^3.1.1",
+    "chalk": "^4.1.2",
+    "command-exists": "^1.2.9",
+    "node-watch": "^0.7.4",
+    "printf": "^0.6.1",
     "typescript": "^5.2.2"
   },
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "watch": "node ./scripts/watch.js"
   }
 }
