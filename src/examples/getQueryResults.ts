@@ -1,18 +1,14 @@
-import { Context } from 'datakit/context'
+import { Context } from "datakit/context";
+import sql from "datakit/sql";
 
-export default (ctx: Context) => {
-    const query = ctx.getAgent('query');
-    if (!query) {
-        throw new Error('Query agent not found');
-    }
-
-    try {
-        const results = query?.getResults("select id, url, title from custom_file.products limit 10");
-        const rows = results.rows as any[];
-        for (const row of rows) {
+export default ({ args }: Context) => {
+    const query = /* SQL */ sql`
+        SELECT url FROM custom_file.products ${args?.id ? "WHERE id = ${args.id}" : ""}
+    `
+    const { data } = query.execute();
+    if (data && data.rows) {
+        for (const row of data.rows) {
             console.log("%s %s %s", row['id'], row['url'], row['title']);
-        }
-    } catch (error) {
-        console.error('Query Error:', error);
+        }    
     }
 };
